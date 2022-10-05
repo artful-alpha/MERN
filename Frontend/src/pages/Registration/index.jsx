@@ -9,14 +9,12 @@ import styles from "./Login.module.scss";
 import { Navigate } from "react-router-dom";
 import { fetchRegister, selectIsAuth } from "../../redux/slices/authSlice";
 import { useForm } from "react-hook-form";
-import { fetchAuth } from "../../redux/slices/authSlice";
 export const Registration = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isValid },
   } = useForm({
     defaultValues: {

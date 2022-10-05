@@ -41,7 +41,7 @@ export const login = async (request, response) => {
     const user = await UserModel.findOne({
       email: request.body.email,
     });
-
+    console.log(request);
     if (!user) {
       return response.status(404).json({
         message: "Not find user",
@@ -86,7 +86,7 @@ export const login = async (request, response) => {
 export const getMe = async (request, response) => {
   try {
     const user = await UserModel.findById(request.userId);
-
+    console.log(request);
     if (!user) {
       return response.status(404).json({
         message: "User not faund",

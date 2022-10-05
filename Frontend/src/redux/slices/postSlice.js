@@ -11,14 +11,6 @@ export const fetchTags = createAsyncThunk("posts/fetchTags", async () => {
   return data;
 });
 
-export const fetchComments = createAsyncThunk(
-  "posts/fetchComments",
-  async (params) => {
-    const { text, postId } = await axios.post("/comments/");
-    return;
-  }
-);
-
 export const fetchRemovePost = createAsyncThunk(
   "posts/fetchRemovePost",
   async (id) => {

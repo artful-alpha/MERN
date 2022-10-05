@@ -5,7 +5,7 @@ import {
   loginValidator,
   postCreateValidator,
   registerValidator,
-  commentsCreateValidator,
+  commentCreateValidator,
 } from "./validation/auth.js";
 import multer from "multer";
 import { checkAuth, handleValidationErrors } from "./utils/index.js";
@@ -72,8 +72,16 @@ app.get("/posts/", PostController.getAll);
 app.get("/posts/:id", PostController.getOne);
 app.delete("/posts/:id", checkAuth, PostController.RemovePost);
 app.patch("/posts/:id", checkAuth, PostController.UpdatePost);
-app.get("/comm/", PostController.getCommnet);
-app.post("/commnets/", PostController.createComment);
+app.get("/commnets/", PostController.getCommnets);
+app.post(
+  "/comment/",
+  checkAuth,
+  commentCreateValidator,
+  handleValidationErrors,
+  PostController.createComment
+);
+app.post("/test/", PostController.PostTest);
+app.get("/test/", checkAuth, PostController.GetTest);
 app.listen(3113, (err) => {
   if (err) {
     return console.log(err);

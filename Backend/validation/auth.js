@@ -19,8 +19,8 @@ export const postCreateValidator = [
   body("imageUrl", "Invalid Url image of post").optional().isString(),
 ];
 
-export const commentsCreateValidator = [
-  body("text", "Please enter valid title comment")
-    .isLength({ min: 3 })
+export const commentCreateValidator = [
+  body("textComment", "Please enter valid title comment")
+    .isLength({ min: 5 })
     .isString(),
 ];

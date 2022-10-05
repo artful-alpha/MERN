@@ -1,8 +1,9 @@
 /*eslint-disable*/
 
-import React from "react";
+import React, { useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+
 import Grid from "@mui/material/Grid";
 import { useDispatch, useSelector } from "react-redux";
 import { Post } from "../components/Post";
@@ -15,12 +16,21 @@ export const Home = () => {
   const { posts, tags } = useSelector((state) => state.posts);
 
   const userData = useSelector((state) => state.auth.data);
-
+  const [isLoadingCooments, setIsLoadingComments] = useState(true);
+  const [allComments, setAllComments] = useState();
   const isPostsLoading = posts.status == "loading";
   const isTagsLoading = posts.status == "loading";
   React.useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
+
+    axios
+      .get("/commnets")
+      .then(({ data }) => {
+        setAllComments(data);
+        setIsLoadingComments(false);
+      })
+      .catch((err) => alert("Error when get comments post"));
   }, []);
   return (
     <>
@@ -28,8 +38,10 @@ export const Home = () => {
         style={{ marginBottom: 15 }}
         value={0}
         aria-label='basic tabs example'>
-        <Tab label='Новые' />
-        <Tab label='Популярные' />
+        <Tab label='Новые' value={0}>
+          THIS TAB
+        </Tab>
+        <Tab label='Популярные' value={1} />
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
@@ -54,25 +66,7 @@ export const Home = () => {
         </Grid>
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} />
-          <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: "Вася Пупкин",
-                  avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
-                },
-                text: "Это тестовый комментарий",
-              },
-              {
-                user: {
-                  fullName: "Иван Иванов",
-                  avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
-                },
-                text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-              },
-            ]}
-            isLoading={false}
-          />
+          <CommentsBlock items={allComments} isLoading={isLoadingCooments} />
         </Grid>
       </Grid>
     </>

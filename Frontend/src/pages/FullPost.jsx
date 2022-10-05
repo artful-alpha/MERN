@@ -16,7 +16,7 @@ export const FullPost = () => {
   const [isLoading, setLoading] = useState(true);
   const { id } = useParams();
   const [comments, setComments] = useState("");
-  const [isLoadingComment, setIsLoadingComment] = useState(true);
+  const [isLoadingCooments, setIsLoadingComments] = useState(true);
   const [pri, setPri] = useState("");
   const { data } = useSelector((state) => state.auth);
 
@@ -28,18 +28,16 @@ export const FullPost = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
         alert("Error when get post");
       });
 
-    const coment = JSON.stringify({
-      postId: id,
-    });
-    axios.get("/comm/", { params: coment }).then(({ data }) => {
-      setComments(data);
-      // console.log(data);
-      setIsLoadingComment(false);
-    });
+    axios
+      .get("/commnets", { params: { postId: id } })
+      .then(({ data }) => {
+        setComments(data);
+        setIsLoadingComments(false);
+      })
+      .catch((err) => alert("Error when get comments post"));
   }, []);
 
   if (isLoading) {
@@ -61,25 +59,8 @@ export const FullPost = () => {
         <ReactMarkdown children={value.text} />
       </Post>
 
-      <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: "Вася Пупкин",
-              avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
-            },
-            text: "Это тестовый комментарий 555555",
-          },
-          {
-            user: {
-              fullName: "Иван Иванов",
-              avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
-            },
-            text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-          },
-        ]}
-        isLoading={false}>
-        <Index />
+      <CommentsBlock items={comments} isLoading={isLoadingCooments}>
+        {data ? <Index /> : <p></p>}
       </CommentsBlock>
     </>
   );

@@ -1,37 +1,80 @@
 import PostModel from "../models/Post.js";
 import CommentModel from "../models/Comment.js";
-
+import TestModel from "../models/Test.js";
 export const createComment = async (request, response) => {
   try {
-    const comments = new CommentModel({
-      text: request.body.text,
+    const doc = new CommentModel({
+      text: request.body.textComment,
       postId: request.body.postId,
+      user: request.userId,
     });
-    const com = await comments.save();
-    response.json(com);
-  } catch (error) {
-    console.log(error);
-    response.status(405).json({
-      message: "Not create Comment",
-      error: error,
+
+    const comment = await doc.save();
+
+    response.json(comment);
+  } catch (err) {
+    response.status(404).json({
+      message: "Not create comment",
+      error: err,
     });
   }
 };
 
-export const getCommnet = async (request, response) => {
+export const PostTest = async (request, response) => {
   try {
-    const posts = await CommentModel.find({
-      postId: JSON.parse(request.query[0]).postId,
+    const doc = new TestModel({
+      title: request.body.title,
     });
-    // console.log(request);
-    // console.log(request.body);
-    // console.log(request.data);
-    // console.log(request.params);
-    response.json(posts);
+    const test = await doc.save();
+
+    response.json(test);
+  } catch (err) {
+    response.status(404).json({
+      message: "Not create test ",
+      error: err,
+    });
+  }
+};
+
+export const GetTest = async (request, response) => {
+  try {
+  } catch (err) {
+    response.status(404).json({
+      message: "Not create test ",
+      error: err,
+    });
+  }
+};
+
+export const getCommnets = async (request, response) => {
+  try {
+    function isEmpty(obj) {
+      for (var key in obj) {
+        return false;
+      }
+      return true;
+    }
+
+    let comments;
+    let getAllComments = false;
+    if (isEmpty(request.query)) {
+      comments = await CommentModel.find().populate("user");
+    } else {
+      comments = await CommentModel.find({
+        postId: request.query.postId,
+      }).populate("user");
+    }
+
+    const commentsArr = comments.map((comment) => {
+      const { email, fullName } = comment.user;
+      const { createdAt, text } = comment;
+      return { text, fullName, createdAt };
+    });
+
+    response.json(commentsArr);
   } catch (error) {
-    console.log(error);
     response.status(500).json({
-      message: "Not gets posts comment",
+      message: "Not comments for post or posts",
     });
   }
 };
@@ -49,7 +92,6 @@ export const create = async (request, response) => {
 
     response.json(post);
   } catch (err) {
-    console.log(err);
     response.status(404).json({
       message: "Not create Post ",
       error: err,
@@ -76,7 +118,6 @@ export const getAll = async (request, response) => {
     const posts = await PostModel.find().populate("user").exec();
     response.json(posts);
   } catch (error) {
-    console.log(error);
     response.status(500).json({
       message: "Not create gets posts",
     });
@@ -94,7 +135,6 @@ export const getTags = async (request, response) => {
 
     response.json(tags);
   } catch (error) {
-    console.log(error);
     response.status(500).json({
       message: "Not gets posts tag",
     });
@@ -115,13 +155,11 @@ export const getOne = async (request, response) => {
       { returnDocument: "after" },
       (err, doc) => {
         if (err) {
-          console.log(err);
           response.status(500).json({
             message: "Not return post",
           });
         }
         if (!doc) {
-          console.log("Post not find");
           return response.status(404).json({
             message: "Post not find",
           });
@@ -131,7 +169,6 @@ export const getOne = async (request, response) => {
       }
     ).populate("user");
   } catch (error) {
-    console.log(error);
     response.status(500).json({
       message: "Not create gets posts",
     });
@@ -148,13 +185,11 @@ export const RemovePost = async (request, response) => {
       },
       (err, doc) => {
         if (err) {
-          console.log(err);
           response.status(500).json({
             message: "Post was not delete",
           });
         }
         if (!doc) {
-          console.log(err);
           response.status(500).json({
             message: "Post not find for delete post",
           });
@@ -166,7 +201,6 @@ export const RemovePost = async (request, response) => {
       }
     );
   } catch (error) {
-    console.log(error);
     response.status(500).json({
       message: "Not create gets posts",
     });
@@ -206,7 +240,6 @@ export const UpdatePost = async (request, response) => {
       }
     );
   } catch (error) {
-    console.log(error);
     response.status(500).json({
       message: "Not update posts",
     });
